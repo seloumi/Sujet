@@ -1,3 +1,3 @@
 # Sujet
-Package to create arabic exam paper for secondary 
+Package to create arabic exam paper for secondary school
 
