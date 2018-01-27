@@ -34,19 +34,13 @@
 \newfontfamily\arabicfonttt[Script=Arabic,Scale=1]{Traditional Arabic}
 %=============================================================
 
-
-\DeclareOption{basic}{%
-\chead{salim bou}
-}
-
-\ProcessOptions\relax
-
+\tikzset{Rnode/.style={font=\beginR}}
 
 \newcommand{\nombox}{
 \begin{tikzpicture}
 \draw [dotted](3mm,0)--(\textwidth-3mm,0);
-\node[fill=white,left] at (\textwidth,0){\textarabic{اللقب والإسم:}};
-\node[fill=white,left] at (0.25\textwidth,0){\textarabic{القسم:}};
+\node[fill=white,left,Rnode] at (\textwidth,0){اللقب والإسم:};
+\node[fill=white,left,Rnode] at (0.25\textwidth,0){القسم:};
 \draw [rounded corners,thick](0,-0.6)rectangle(\textwidth,0.6);
 \end{tikzpicture}
 \par
@@ -116,7 +110,7 @@
 \ifLTR%
 \node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\thenbrlignes){#2};
 \else
-\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt] at (\linewidth-5mm,\thenbrlignes){\textarabic{#2}};
+\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\thenbrlignes){#2};
 \fi
 \useasboundingbox (0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
 \ifborder% 
