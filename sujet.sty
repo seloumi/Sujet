@@ -10,9 +10,9 @@
 % Used fonts: Amiri, AlBattar, Traditional Arabic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ProvidesPackage{sujet}[2015/03/14]
+\ProvidesPackage{sujet}[2018/02/10]
 \NeedsTeXFormat{LaTeX2e}
-
+\RequirePackage{etoolbox}
 %%%%%%%%%%%%
 % packages %
 %%%%%%%%%%%%
@@ -24,40 +24,60 @@
 \RequirePackage[explicit,compact]{titlesec}
 \RequirePackage{polyglossia}
 
+
+
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
 \setotherlanguage{english}
 \newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
 \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
-\newfontfamily\arabicfonttt[Script=Arabic,Scale=1]{Traditional Arabic}
+\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
 %=============================================================
 
-\tikzset{Rnode/.style={font=\beginR}}
-
-\newcommand{\nombox}{
-\begin{tikzpicture}
-\draw [dotted](3mm,0)--(\textwidth-3mm,0);
-\node[fill=white,left,Rnode] at (\textwidth,0){اللقب والإسم:};
-\node[fill=white,left,Rnode] at (0.25\textwidth,0){القسم:};
-\draw [rounded corners,thick](0,-0.6)rectangle(\textwidth,0.6);
-\end{tikzpicture}
-\par
-}
 
 \newcounter{nbrlignes}
 \setcounter{nbrlignes}{2}
 
-\newif\ifnom
-\newif\ifshowduree
-\newif\ifLTR
-\newif\ifborder
-\nomfalse
-\showdureetrue
-\bordertrue
+
+\newif \ifnom        \nomfalse
+\newif \ifshowduree  \showdureetrue 
+\newif \ifLTR        \LTRfalse
+\newif \ifborder     \bordertrue
+\newif \iflscape     \lscapefalse
+
+\makeatletter
+\def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  \else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
+\makeatother
+
+\DeclareOption{landscape}{
+	\geometry{landscape}
+    \lscapetrue
+}
+
+\DeclareOption*{\PackageWarning{sujet}{Unknown ‘\CurrentOption’ option}}
+
+\ProcessOptions\relax
+
+
+
+
+
+
+\tikzset{Rnode/.style={font=\beginR}}
+
+\newcommand{\nombox}{
+	\begin{tikzpicture}
+	\draw [dotted](3mm,0)--(\columnwidth-3mm,0);
+	\node[fill=white,left,Rnode] at (\columnwidth,0){اللقب والإسم:};
+	\node[fill=white,left,Rnode] at (0.25\columnwidth,0){القسم:};
+	\draw [rounded corners,thick](0,-0.6)rectangle(\columnwidth,0.6);
+	\end{tikzpicture}
+	\par
+}
+
 
 % define keys ================================================
-\newcommand{\annee}[1][2018-2017]
-{#1}
+\newcommand{\annee}[1][2018-2017]{السنة الدراسية: #1}
 \newcommand{\lycee}[1][ثانوية: صالح بن مهنا - كركرة]
 {#1}
 \newcommand{\duree}[1][ساعة]
@@ -69,7 +89,7 @@
 \newcommand{\showduree}[1][true]{\csname showduree#1\endcsname\ifshowduree المدة: \duree  \fi}
 
 \makeatletter
-\define@key{sujetkeys}{annee}{\renewcommand{\annee}[1]{#1}}
+\define@key{sujetkeys}{annee}{\renewcommand{\annee}[1]{السنة الدراسية: #1}}
 \define@key{sujetkeys}{lycee}{\renewcommand{\lycee}[1]{#1}}
 \define@key{sujetkeys}{niveau}{\renewcommand{\niveau}[1]{#1}}
 \define@key{sujetkeys}{duree}{\renewcommand{\duree}[1]{#1}}
@@ -82,17 +102,16 @@
 
 %define sujetset command  ======================================
 \newcommand\sujetset[2][]{%
-\setkeys{sujetkeys}{#1}
-\pagestyle{fancy}
-\renewcommand{\footrulewidth}{1pt}
-\renewcommand{\headrulewidth}{1pt}
-\lhead{\ifnum\thepage=1{\sffamily السنة الدراسية: \annee}\fi}
-\rhead{\ifnum\thepage=1{\sffamily \lycee{}}\fi}
-\cfoot{\ifnum\ztotpages=1 \else صفحة \thepage\ من \ztotpages \fi}
-\centerline{\sffamily\large  #2 }
-\rule{\textwidth}{1pt}
-\centerline{\sffamily المستوى: \niveau\   \hfill   \showduree}
-\nom
+	\setkeys{sujetkeys}{#1}
+	\pagestyle{fancy}
+	\renewcommand{\footrulewidth}{1pt}
+	\renewcommand{\headrulewidth}{1pt}
+	\chead{\sffamily \ifnum\thepage=1 \iflscape\lycee{}\hfill\annee\hskip\columnsep\lycee{}\hfill\annee\else\annee\hfill\lycee{}\fi\fi}
+	\cfoot{\ifnum\ztotpages>1 \iflscape \hfill  صفحة \thepage\ من \ztotpages \hfill صفحة \thepage\ من \ztotpages \hfill\else  صفحة \thepage\ من \ztotpages\fi\fi}
+	\long\gdef\head{\centerline{\sffamily\large  #2 }
+	\rule{\linewidth}{1pt}
+	\centerline{\sffamily المستوى: \niveau\   \hfill   \showduree}
+	\nom}\head
 }
 
 \setlength{\headsep}{15pt}% defaut 25pt
@@ -102,34 +121,34 @@
 
 % box for solutions  ===========================================
 \newcommand\solbox[2][]{%
-\setkeys{solboxkeys}{#1}
-  \begin{tikzpicture}[thick]
- \foreach \i in{1,...,\thenbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
-\ifLTR%
-\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\thenbrlignes){#2};
-\else
-\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\thenbrlignes){#2};
-\fi
-\useasboundingbox (0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
-\ifborder% 
-\draw [rounded corners](0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
-\fi  
- \end{tikzpicture}
-\LTRfalse    
-\bordertrue
+	\setkeys{solboxkeys}{#1}
+	\begin{tikzpicture}[thick]
+	\foreach \i in{1,...,\thenbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
+	\ifLTR%
+	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\thenbrlignes){#2};
+	\else
+	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\thenbrlignes){#2};
+	\fi
+	\useasboundingbox (0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
+	\ifborder% 
+	\draw [rounded corners](0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
+	\fi  
+	\end{tikzpicture}
+	\LTRfalse    
+	\bordertrue
 }
 
 % define \twoparts command  =====================================
 \newcommand{\twoparts}[3][0.5]{%
-\par
-\begin{minipage}[t]{#1\textwidth}
-#2
-\end{minipage}
-\hfill
-\begin{minipage}[t]{\textwidth- #1\textwidth -3mm}
-#3
-\end{minipage}
-\par
+	\par
+	\begin{minipage}[t]{#1\textwidth}
+		#2
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{\textwidth- #1\textwidth -3mm}
+		#3
+	\end{minipage}
+	\par
 }
 
 % section format  =============================================
@@ -140,96 +159,99 @@
 
 \titleformat{\section}
 {\large\sffamily}{}{0em}{\underline{#1}%
-\ifnum\thenote>1% 
-      \ifnum\thenote>10 {\formatnote{نقطة}} 
-      \else {\formatnote{نقاط}}
-      \fi
-      \setcounter{note}{1}
-\fi}
+	\ifnum\thenote>1% 
+	\ifnum\thenote>10 {\formatnote{نقطة}} 
+	\else {\formatnote{نقاط}}
+	\fi
+	\setcounter{note}{1}
+	\fi}
 
 % define command \help =========================================
 \def\bverb#1{\begingroup\ttfamily \textcolor{blue}{#1}\endgroup}
 \def\gverb#1{\begingroup\ttfamily\footnotesize \textcolor{gray!40!black}{#1}
-\endgroup}
+	\endgroup}
+
+
+
 
 \newcommand{\help}{%
-\fontsize{10}{15}
-\selectfont
-\begin{tikzpicture}
-\node[text width=\textwidth-4mm,fill=blue!20,inner sep=2mm]{
-\begin{RTL}
-الحزمة
-\bverb{sujet} 
-هي حزمة معدة لكتابة أوراق أسئلة للإختبارات، الفروض والواجبات، توفر التعليمة :
-
-\centerline{\LR{\bverb{\string \sujetset[<keys=value>]\{title\}}}}
- 
-حيث 
-\bverb{keys}
-هي كلمات مفتاحية وهي بالتفصيل :
-
-\begin{english}
-
--\makebox[0.5\textwidth][l]{\bverb{annee}=\textarabic{الموسم الدراسي
-}}\gverb{(default=2016-2015)}
-
--\makebox[0.5\textwidth][l]{\bverb{lycee}=\textarabic{مؤسسة العمل
-}}\gverb{(default=\textarabic{اسم المؤسسة هنا}(}
-
--\makebox[0.5\textwidth][l]{\bverb{niveau}= \textarabic{المستوى الدراسي
-}}\gverb{(default=\textarabic{\textenglish{1} ج م ع تك}(}
-
--\makebox[0.5\textwidth][l]{\bverb{duree}=\textarabic{مدة الإختبار (الفرض)}}%
-\gverb{(default=\textarabic{ساعة}(}
-
--\makebox[0.5\textwidth][l]{\bverb{show duree}=\textarabic{لإظهار مدة الاختبار أو إخفائه \textenglish{(boolean)}}}%
-\gverb{(default=true)}
-
-
--\makebox[0.5\textwidth][l]{\bverb{nom}=\textarabic{إطار لكتابة اسم الطالب \textenglish{(boolean)}}}%
-\gverb{(default=false)}
-
-\end{english}
-
-إذا لم تحدد الكلمات المفتاحية في التعليمة
-\bverb{sujetset}
-فإن البرنامج يستعمل القيم الإفتراضية،
- والتي يمكن تغييرها بالدخول على الملف sujet.sty
-الأسطر من 
-64 إلى 75، 
-يمكن تغيير الخطوط بالأسطر : 39،38،37
-
-\medskip
-
-\textcolor{red}{تعليمات إضافية}\\
-توفر الحزمة تعليمات للمساعدة هي :
-
-\begin{english}
-
--\makebox[0.85\textwidth][l]{\bverb{\LR{\string\solbox[<key=value>]\{text\}}}=\textarabic{إطار لكتابة الإجابة
-}}
-
-{\setRTL
-\textarabic{حيث الكلمات المفتاحية هي:}
-}
-
-\hspace{1cm}\makebox[0.45\textwidth][l]{-\bverb{lignes}= \textarabic{لتعيين عدد الأسطر بالإطار}}\gverb{(default n=2)}
-
-\hspace{1cm}\makebox[0.45\textwidth][l]{-\bverb{LTR}=\textarabic{اتجاه الكتابة من اليسار إلى اليمين \textenglish{(boolean)}}}%
-\gverb{(default=false)}
-
-\bigskip
-
--\makebox[0.88\textwidth][l]{\bverb{\LR{\string\note\{n\}}}=\textarabic{لتعيين علامة لكل تمرين
-}}\gverb{(no default)}
-
--\makebox[0.88\textwidth][l]{\bverb{\LR{\string\twoparts[fraction]\{first part\}\{second part\}}}=\textarabic{تقسيم الصفحة إلى جزءين النسبة بين عرضيهما هو \textenglish{"fraction"}}
-}\gverb{(default=0.5)}
-
-\end{english}
-
-\end{RTL}
-};
-\end{tikzpicture}
-\bigskip
+	\fontsize{10}{15}
+	\selectfont
+	\begin{tikzpicture}
+	\node[text width=\textwidth-4mm,fill=blue!20,inner sep=2mm]{
+		\begin{RTL}
+		الحزمة
+		\bverb{sujet} 
+		هي حزمة معدة لكتابة أوراق أسئلة للإختبارات، الفروض والواجبات، توفر التعليمة :
+		
+		\centerline{\LR{\bverb{\string \sujetset[<keys=value>]\{title\}}}}
+		
+		حيث 
+		\bverb{keys}
+		هي كلمات مفتاحية وهي بالتفصيل :
+		
+		\begin{english}
+		
+		-\makebox[0.5\textwidth][l]{\bverb{annee}=\textarabic{الموسم الدراسي
+		}}\gverb{(default=2016-2015)}
+		
+		-\makebox[0.5\textwidth][l]{\bverb{lycee}=\textarabic{مؤسسة العمل
+		}}\gverb{(default=\textarabic{اسم المؤسسة هنا}(}
+		
+		-\makebox[0.5\textwidth][l]{\bverb{niveau}= \textarabic{المستوى الدراسي
+		}}\gverb{(default=\textarabic{\textenglish{1} ج م ع تك}(}
+		
+		-\makebox[0.5\textwidth][l]{\bverb{duree}=\textarabic{مدة الإختبار (الفرض)}}%
+		\gverb{(default=\textarabic{ساعة}(}
+		
+		-\makebox[0.5\textwidth][l]{\bverb{show duree}=\textarabic{لإظهار مدة الاختبار أو إخفائه \textenglish{(boolean)}}}%
+		\gverb{(default=true)}
+		
+		
+		-\makebox[0.5\textwidth][l]{\bverb{nom}=\textarabic{إطار لكتابة اسم الطالب \textenglish{(boolean)}}}%
+		\gverb{(default=false)}
+		
+		\end{english}
+		
+		إذا لم تحدد الكلمات المفتاحية في التعليمة
+		\bverb{sujetset}
+		فإن البرنامج يستعمل القيم الإفتراضية،
+		والتي يمكن تغييرها بالدخول على الملف sujet.sty
+		الأسطر من 
+		64 إلى 75، 
+		يمكن تغيير الخطوط بالأسطر : 39،38،37
+		
+		\medskip
+		
+		\textcolor{red}{تعليمات إضافية}\\
+		توفر الحزمة تعليمات للمساعدة هي :
+		
+		\begin{english}
+		
+		-\makebox[0.85\textwidth][l]{\bverb{\LR{\string\solbox[<key=value>]\{text\}}}=\textarabic{إطار لكتابة الإجابة
+		}}
+		
+		{\setRTL
+			\textarabic{حيث الكلمات المفتاحية هي:}
+		}
+		
+		\hspace{1cm}\makebox[0.45\textwidth][l]{-\bverb{lignes}= \textarabic{لتعيين عدد الأسطر بالإطار}}\gverb{(default n=2)}
+		
+		\hspace{1cm}\makebox[0.45\textwidth][l]{-\bverb{LTR}=\textarabic{اتجاه الكتابة من اليسار إلى اليمين \textenglish{(boolean)}}}%
+		\gverb{(default=false)}
+		
+		\bigskip
+		
+		-\makebox[0.88\textwidth][l]{\bverb{\LR{\string\note\{n\}}}=\textarabic{لتعيين علامة لكل تمرين
+		}}\gverb{(no default)}
+		
+		-\makebox[0.88\textwidth][l]{\bverb{\LR{\string\twoparts[fraction]\{first part\}\{second part\}}}=\textarabic{تقسيم الصفحة إلى جزءين النسبة بين عرضيهما هو \textenglish{"fraction"}}
+		}\gverb{(default=0.5)}
+		
+		\end{english}
+		
+		\end{RTL}
+	};
+	\end{tikzpicture}
+	\bigskip
 }
