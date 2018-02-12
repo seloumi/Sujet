@@ -10,7 +10,7 @@
 % Used fonts: Amiri, AlBattar, Traditional Arabic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ProvidesPackage{sujet}[2018/02/10]
+\ProvidesPackage{sujet}[2015/03/14]
 \NeedsTeXFormat{LaTeX2e}
 \RequirePackage{etoolbox}
 %%%%%%%%%%%%
@@ -18,10 +18,10 @@
 %%%%%%%%%%%%
 \RequirePackage[margin=2cm]{geometry}
 \RequirePackage{amsmath,amsfonts,amssymb}
-\RequirePackage{fancyhdr}
 \RequirePackage{tikz}
 \RequirePackage[totpages,user]{zref}
 \RequirePackage[explicit,compact]{titlesec}
+\RequirePackage{fancyhdr}
 \RequirePackage{polyglossia}
 
 
@@ -46,7 +46,8 @@
 \newif \iflscape     \lscapefalse
 
 \makeatletter
-\def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  \else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
+\def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
+	            \else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
 \makeatother
 
 \DeclareOption{landscape}{
@@ -59,17 +60,13 @@
 \ProcessOptions\relax
 
 
-
-
-
-
 \tikzset{Rnode/.style={font=\beginR}}
 
 \newcommand{\nombox}{
 	\begin{tikzpicture}
 	\draw [dotted](3mm,0)--(\columnwidth-3mm,0);
 	\node[fill=white,left,Rnode] at (\columnwidth,0){اللقب والإسم:};
-	\node[fill=white,left,Rnode] at (0.25\columnwidth,0){القسم:};
+	\node[fill=white,left,yshift=2pt,Rnode] at (0.25\columnwidth,0){العلامة:};
 	\draw [rounded corners,thick](0,-0.6)rectangle(\columnwidth,0.6);
 	\end{tikzpicture}
 	\par
@@ -78,7 +75,7 @@
 
 % define keys ================================================
 \newcommand{\annee}[1][2018-2017]{السنة الدراسية: #1}
-\newcommand{\lycee}[1][ثانوية: اسم المؤسسة]
+\newcommand{\lycee}[1][ثانوية: اسم المؤسسة هنا]
 {#1}
 \newcommand{\duree}[1][ساعة]
 {#1}
@@ -104,9 +101,10 @@
 \newcommand\sujetset[2][]{%
 	\setkeys{sujetkeys}{#1}
 	\pagestyle{fancy}
+	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \iflscape\lycee{}\hfill\annee\hskip\columnsep\lycee{}\hfill\annee\else\annee\hfill\lycee{}\fi\fi}
+	\chead{\sffamily \ifnum\thepage=1 \lycee{}\hfill\iflscape\annee\hskip\columnsep\lycee{}\hfill\fi\annee\fi}
 	\cfoot{\ifnum\ztotpages>1 \iflscape \hfill  صفحة \thepage\ من \ztotpages \hfill صفحة \thepage\ من \ztotpages \hfill\else  صفحة \thepage\ من \ztotpages\fi\fi}
 	\long\gdef\head{\centerline{\sffamily\large  #2 }
 	\rule{\linewidth}{1pt}
