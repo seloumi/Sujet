@@ -9,13 +9,15 @@
 % This template needs to be compiled with XeLaTeX 
 % Used fonts: Amiri, AlBattar, Traditional Arabic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\ProvidesPackage{sujet}[2015/03/14]
 \NeedsTeXFormat{LaTeX2e}
-\RequirePackage{etoolbox}
+\ProvidesPackage{sujet}[2018/02/14]
+
+
 %%%%%%%%%%%%
 % packages %
 %%%%%%%%%%%%
+
+\RequirePackage{etoolbox}
 \RequirePackage[margin=2cm]{geometry}
 \RequirePackage{amsmath,amsfonts,amssymb}
 \RequirePackage{tikz}
@@ -45,19 +47,22 @@
 \newif \ifborder     \bordertrue
 \newif \iflscape     \lscapefalse
 
-\makeatletter
-\def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
-	            \else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
-\makeatother
 
 \DeclareOption{landscape}{
 	\geometry{landscape}
-    \lscapetrue
+	\if@twocolumn 
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\geometry{hmargin=1cm}	    
+	\fi 
+	\lscapetrue     
 }
 
 \DeclareOption*{\PackageWarning{sujet}{Unknown ‘\CurrentOption’ option}}
 
 \ProcessOptions\relax
+
+\def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
+	\else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
 
 
 \tikzset{Rnode/.style={font=\beginR}}
@@ -75,7 +80,7 @@
 
 % define keys ================================================
 \newcommand{\annee}[1][2018-2017]{السنة الدراسية: #1}
-\newcommand{\lycee}[1][ثانوية: اسم المؤسسة هنا]
+\newcommand{\lycee}[1][ثانوية: صالح بن مهنا - كركرة]
 {#1}
 \newcommand{\duree}[1][ساعة]
 {#1}
@@ -104,15 +109,16 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \lycee{}\hfill\iflscape\annee\hskip\columnsep\lycee{}\hfill\fi\annee\fi}
-	\cfoot{\ifnum\ztotpages>1 \iflscape \hfill  صفحة \thepage\ من \ztotpages \hfill صفحة \thepage\ من \ztotpages \hfill\else  صفحة \thepage\ من \ztotpages\fi\fi}
+	\chead{\sffamily \ifnum\thepage=1 \lycee{}\hfill\iflscape\annee\hskip\columnsep\lycee{}\fi\hfill\annee\fi}
+	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \iflscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
 	\long\gdef\head{\centerline{\sffamily\large  #2 }
-	\rule{\linewidth}{1pt}
+	\rule{\columnwidth}{1pt}
 	\centerline{\sffamily المستوى: \niveau\   \hfill   \showduree}
 	\nom}\head
 }
 
 \setlength{\headsep}{15pt}% defaut 25pt
+\setlength{\headheight}{15pt}
 \setlength{\itemsep}{3cm}
 \arraycolsep=1.4pt
 \parindent=0pt
@@ -253,3 +259,5 @@
 	\end{tikzpicture}
 	\bigskip
 }
+
+\endinput
