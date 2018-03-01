@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  XeLaTeX Template
-% (14/3/2015)
+% (22/2/2018)
 %
 % author:
 % Salim bou (salimcollo7@gmail.com)
@@ -24,28 +24,57 @@
 \RequirePackage[totpages,user]{zref}
 \RequirePackage[explicit,compact]{titlesec}
 \RequirePackage{fancyhdr}
-\RequirePackage{polyglossia}
+\RequirePackage{array}    
+\RequirePackage{longtable}    
 
 
 
-% languages & fonts===========================================
-\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
-\setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
-\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
-%=============================================================
+\newcount\c@nbrlignes
+\c@nbrlignes=2
+
+\newdimen\d@lastcol
+\d@lastcol=\dimexpr .125\textwidth-3\tabcolsep-2\arrayrulewidth\relax 
+
+\newif \if@nom           \@nomfalse
+\newif \if@LTR           \@LTRfalse
+\newif \if@border        \@bordertrue
+\newif \if@correction    \@correctionfalse
+\newif \if@stretchtable  \@stretchtablefalse
+
+\def\settempdimen{\newdimen\tempn \tempn=.5\arrayrulewidth \advance \tempn by \tabcolsep\relax}
+
+\def\tikzmark#1{\tikz[remember picture,overlay]\node(#1)[inner sep=0pt]{};}
+
+\def\stretchtable{%
+	\global\@stretchtabletrue%
+	\settempdimen\hbox to \hsize{\hbox to 0pt{\hss\tikzmark{A}\hskip\tempn}\hfill\hbox to 0pt{\hskip\tempn\tikzmark{B}\hss}}&
+	\settempdimen\hbox to \hsize{\hbox to 0pt{}\hfill\hbox to 0pt{\hskip\tempn\tikzmark{C}\hss}}&
+	\settempdimen\hbox to \hsize{\hfill\hbox to 0pt{\hskip\tempn\tikzmark{D}\hss}}}
 
 
-\newcounter{nbrlignes}
-\setcounter{nbrlignes}{2}
-
-
-\newif \ifnom        \nomfalse
-\newif \ifshowduree  \showdureetrue 
-\newif \ifLTR        \LTRfalse
-\newif \ifborder     \bordertrue
-\newif \iflscape     \lscapefalse
+\DeclareOption{correction}{
+\@correctiontrue 
+\newenvironment{correction}{
+\begin{longtable}{|b{.75\textwidth}|>{\centering}b{\d@lastcol}|>{\centering\arraybackslash}b{\d@lastcol}|}
+	\hline
+	\centering\sffamily\vtop to 0pt{\vskip0pt عناصر الإجابة\vss} & 
+	\multicolumn{2}{c|}{\sffamily العلامة}\\
+	\cline{2-3}
+	& 
+	\sffamily مـجزأة
+	&
+	\sffamily المجموع\\
+	\hline  
+}{
+\end{longtable}
+\if@stretchtable 
+\begin{tikzpicture}[remember picture,overlay]
+\draw[line width=\arrayrulewidth](A)|-([yshift=2cm]current page.south)-|(D);
+\draw[line width=\arrayrulewidth](B)|-([yshift=2cm]current page.south)-|(C);
+\end{tikzpicture}
+\fi
+}
+}
 
 
 \DeclareOption{landscape}{
@@ -54,12 +83,25 @@
 	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
 	\geometry{hmargin=1cm}	    
 	\fi 
-	\lscapetrue     
 }
 
 \DeclareOption*{\PackageWarning{sujet}{Unknown ‘\CurrentOption’ option}}
 
 \ProcessOptions\relax
+
+
+
+\RequirePackage{polyglossia}
+
+% languages & fonts===========================================
+\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
+\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
+\newfontfamily\englishfonttt{Latin Modern Mono}
+%=============================================================
+
 
 \def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
 	\else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
@@ -70,37 +112,46 @@
 \newcommand{\nombox}{
 	\begin{tikzpicture}
 	\draw [dotted](3mm,0)--(\columnwidth-3mm,0);
-	\node[fill=white,left,Rnode] at (\columnwidth,0){اللقب والإسم:};
+	\node[fill=white,left,Rnode] at (\columnwidth-3\pgflinewidth,0){اللقب والإسم:};
 	\node[fill=white,left,yshift=2pt,Rnode] at (0.25\columnwidth,0){العلامة:};
-	\draw [rounded corners,thick](0,-0.6)rectangle(\columnwidth,0.6);
+	\draw [rounded corners,thick](0,-0.6)rectangle(\columnwidth-4\pgflinewidth,0.6);
 	\end{tikzpicture}
 	\par
 }
 
 
-% define keys ================================================
-\newcommand{\annee}[1][2018-2017]{السنة الدراسية: #1}
-\newcommand{\lycee}[1][ثانوية: اسم المؤسسة ]
+\def\@annee{
+\newcount\altyear
+\altyear=\year
+\ifnum\month>8 %
+      \advance \altyear by 1 %
+      \the\year\ -  \the\altyear
+\else %
+      \advance \altyear by -1 %
+      \the\altyear\ - \the\year
+\fi 
+}
+
+\def\annee{ السنة الدراسية:\@annee}
+
+\newcommand{\etab}[1][ثانوية: اسم المؤسسة هنا ]
 {#1}
 \newcommand{\duree}[1][ساعة]
-{#1}
+{المدة: #1}
 \newcommand{\niveau}[1][1 ج م ع تك]
-{#1}
-\newcommand{\nom}[1][false]{\csname nom#1\endcsname\ifnom\nombox \fi}
+{المستوى: #1}
+\newcommand{\nom}[1][false]{\csname nom#1\endcsname\if@nom\nombox \fi}
 
-\newcommand{\showduree}[1][true]{\csname showduree#1\endcsname\ifshowduree المدة: \duree  \fi}
+% define keys ================================================
 
-\makeatletter
-\define@key{sujetkeys}{annee}{\renewcommand{\annee}[1]{السنة الدراسية: #1}}
-\define@key{sujetkeys}{lycee}{\renewcommand{\lycee}[1]{#1}}
-\define@key{sujetkeys}{niveau}{\renewcommand{\niveau}[1]{#1}}
-\define@key{sujetkeys}{duree}{\renewcommand{\duree}[1]{#1}}
-\define@key{sujetkeys}{nom}[true]{\renewcommand{\nom}{\csname nom#1\endcsname\ifnom\nombox \fi}}
-\define@key{sujetkeys}{show duree}[false]{\renewcommand{\showduree}{\csname showduree#1\endcsname\ifshowduree المدة: \duree\fi}}
-\define@key{solboxkeys}{lignes}{\setcounter{nbrlignes}{#1}}
-\define@key{solboxkeys}{LTR}[true]{\csname LTR#1\endcsname}
-\define@key{solboxkeys}{border}[true]{\csname border#1\endcsname}
-\makeatother
+\define@key{sujetkeys}{etab}{\renewcommand{\etab}[1]{#1}}
+\define@key{sujetkeys}{niveau}{\renewcommand{\niveau}[1]{المستوى: #1}}
+\define@key{sujetkeys}{duree}{\renewcommand{\duree}[1]{المدة: #1}}
+\define@key{sujetkeys}{nom}[true]{\renewcommand{\nom}{\csname nom#1\endcsname\if@nom\nombox \fi}}
+\define@key{solboxkeys}{lignes}{\c@nbrlignes=#1}
+\define@key{solboxkeys}{LTR}[true]{\csname @LTR#1\endcsname}
+\define@key{solboxkeys}{border}[true]{\csname @border#1\endcsname}
+
 
 %define sujetset command  ======================================
 \newcommand\sujetset[2][]{%
@@ -109,16 +160,21 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \lycee{}\hfill\iflscape\annee\hskip\columnsep\lycee{}\fi\hfill\annee\fi}
-	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \iflscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
-	\long\gdef\head{\centerline{\sffamily\large  #2 }
+	\chead{\sffamily \ifnum\thepage=1 \etab{}\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\etab{}\fi\fi\hfill\annee\fi}
+	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
+	\if@correction
+	\else
+	\long\gdef\head{%
+	\begingroup 
+	\sffamily\large\leavevmode\hfill  #2 \hfill\ \par
 	\rule{\columnwidth}{1pt}
-	\centerline{\sffamily المستوى: \niveau\   \hfill   \showduree}
-	\nom}\head
-}
+	\niveau\ \hfill \duree \par \endgroup}% 
+	\head\no
+    \fi
+}  
 
 \setlength{\headsep}{15pt}% defaut 25pt
-\setlength{\headheight}{15pt}
+\setlength{\headheight}{15.4pt}
 \setlength{\itemsep}{3cm}
 \arraycolsep=1.4pt
 \parindent=0pt
@@ -126,20 +182,23 @@
 % box for solutions  ===========================================
 \newcommand\solbox[2][]{%
 	\setkeys{solboxkeys}{#1}
+	\par
 	\begin{tikzpicture}[thick]
-	\foreach \i in{1,...,\thenbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
+	\foreach \i in{1,...,\the\c@nbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
 	\ifLTR%
-	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\thenbrlignes){#2};
+	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\the\c@nbrlignes){#2};
 	\else
-	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\thenbrlignes){#2};
+	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\the\c@nbrlignes){#2};
 	\fi
-	\useasboundingbox (0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
+	\useasboundingbox (0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
 	\ifborder% 
-	\draw [rounded corners](0,0.3) rectangle (\linewidth,\thenbrlignes+0.8);
+	\draw [rounded corners](0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
 	\fi  
 	\end{tikzpicture}
-	\LTRfalse    
-	\bordertrue
+	\par
+	\@LTRfalse    
+	\@bordertrue
+    \c@nbrlignes=2
 }
 
 % define \twoparts command  =====================================
@@ -156,107 +215,108 @@
 }
 
 % section format  =============================================
-\newcounter{note}
-\setcounter{note}{1}
-\newcommand{\note}[1]{\setcounter{note}{#1}}
-\newcommand{\formatnote}[1]{\normalfont\footnotesize\color{red!60!black}\mbox{(\thenote\kern .5 ex  #1)}} 
+\newcount\c@note
+\c@note=1
+\def\note#1{\global\c@note=#1}
+\def\formatnote#1{\begingroup\normalfont\footnotesize\color{red!60!black}\mbox{(\number\c@note\kern .5 ex  #1)}\endgroup} 
 
 \titleformat{\section}
 {\large\sffamily}{}{0em}{\underline{#1}%
-	\ifnum\thenote>1% 
-	\ifnum\thenote>10 {\formatnote{نقطة}} 
-	\else {\formatnote{نقاط}}
-	\fi
-	\setcounter{note}{1}
+	\ifnum\c@note>1 % 
+	\ifnum\c@note>10 % 
+	\formatnote{نقطة} %
+	\else %
+	\formatnote{نقاط} %
+	\fi %
+	\global\c@note=1
 	\fi}
 
 % define command \help =========================================
-\def\bverb#1{\begingroup\ttfamily \textcolor{blue}{#1}\endgroup}
-\def\gverb#1{\begingroup\ttfamily\footnotesize \textcolor{gray!40!black}{#1}
+\def\bverb#1{\begingroup\englishfonttt \textcolor{blue}{#1}\endgroup}
+\def\gverb#1{\begingroup\englishfonttt \footnotesize \textcolor{gray!40!black}{#1}
 	\endgroup}
 
 
 
 
-\newcommand{\help}{%
-	\fontsize{10}{15}
+\long\def\help{%
+    \fontsize{10}{15}
 	\selectfont
-	\begin{tikzpicture}
-	\node[text width=\columnwidth-4mm,fill=blue!20,inner sep=2mm]{
-		\begin{RTL}
+	\clearpage
+	    \setRTL
+	    
 		الحزمة
 		\bverb{sujet} 
 		هي حزمة معدة لكتابة أوراق أسئلة للإختبارات، الفروض والواجبات، توفر التعليمة :
 		
-		\centerline{\LR{\bverb{\string \sujetset[<keys=value>]\{title\}}}}
+		\centerline{\LR{\bverb{\string\sujetset[<keys=value>]\{title\}}}}
 		
 		حيث 
 		\bverb{keys}
 		هي كلمات مفتاحية وهي بالتفصيل :
+		\bigskip
 		
 		\begin{english}
 		
-		-\makebox[0.5\columnwidth][l]{\bverb{annee}=\textarabic{الموسم الدراسي
-		}}\gverb{(default=2016-2015)}
+		{\centering 
+		\begin{tabular}{@{\hskip1em}lp{6cm}p{2.5cm}}
+		\hline
+		\englishfonttt key  & \englishfonttt definition &  \englishfonttt default\\
+		\hline
+		\bverb{etab}   &\textarabic{مؤسسة العمل}          & \gverb{\textarabic{اسم المؤسسة هنا}}\\
+		\bverb{niveau} & \textarabic{المستوى الدراسي}   &    \gverb{\textarabic{1 ج م ع تك}}\\
+		\bverb{duree}  & \textarabic{مدة الإختبار (الفرض)} &  \gverb{\textarabic{ساعة}}\\
+		\bverb{nom}    & {\englishfonttt (boolean)}\textarabic{إطار لكتابة اسم الطالب}  & \gverb{false}\\
+		\hline
+		\end{tabular}
+	    \par\bigskip  
+         }
 		
-		-\makebox[0.5\columnwidth][l]{\bverb{lycee}=\textarabic{مؤسسة العمل
-		}}\gverb{(default=\textarabic{اسم المؤسسة هنا}(}
-		
-		-\makebox[0.5\columnwidth][l]{\bverb{niveau}= \textarabic{المستوى الدراسي
-		}}\gverb{(default=\textarabic{\textenglish{1} ج م ع تك}(}
-		
-		-\makebox[0.5\columnwidth][l]{\bverb{duree}=\textarabic{مدة الإختبار (الفرض)}}%
-		\gverb{(default=\textarabic{ساعة}(}
-		
-		-\makebox[0.5\columnwidth][l]{\bverb{show duree}=\textarabic{لإظهار مدة الاختبار أو إخفائه \textenglish{(boolean)}}}%
-		\gverb{(default=true)}
-		
-		
-		-\makebox[0.5\columnwidth][l]{\bverb{nom}=\textarabic{إطار لكتابة اسم الطالب \textenglish{(boolean)}}}%
-		\gverb{(default=false)}
-		
-		\end{english}
+	    \end{english}
 		
 		إذا لم تحدد الكلمات المفتاحية في التعليمة
 		\bverb{sujetset}
 		فإن البرنامج يستعمل القيم الإفتراضية،
-		والتي يمكن تغييرها بالدخول على الملف sujet.sty
-		الأسطر من 
-		64 إلى 75، 
-		يمكن تغيير الخطوط بالأسطر : 39،38،37
-		
+		والتي يمكن تغييرها بالملف sujet.sty
+				
 		\medskip
 		
 		\textcolor{red}{تعليمات إضافية}\\
 		توفر الحزمة تعليمات للمساعدة هي :
 		
 		\begin{english}
-		
+				
 		-\makebox[0.85\columnwidth][l]{\bverb{\LR{\string\solbox[<key=value>]\{text\}}}=\textarabic{إطار لكتابة الإجابة
 		}}
 		
 		{\setRTL
+			
 			\textarabic{حيث الكلمات المفتاحية هي:}
 		}
 		
-		\hspace{1cm}\makebox[0.45\columnwidth][l]{-\bverb{lignes}= \textarabic{لتعيين عدد الأسطر بالإطار}}\gverb{(default n=2)}
-		
-		\hspace{1cm}\makebox[0.45\columnwidth][l]{-\bverb{LTR}=\textarabic{اتجاه الكتابة من اليسار إلى اليمين \textenglish{(boolean)}}}%
-		\gverb{(default=false)}
 		
 		\bigskip
 		
-		-\makebox[0.88\columnwidth][l]{\bverb{\LR{\string\note\{n\}}}=\textarabic{لتعيين علامة لكل تمرين
-		}}\gverb{(no default)}
+		{\centering
+		\begin{tabular}{@{\hskip1em}lp{6.5cm}p{1.5cm}}
+		\hline 
+		\englishfonttt key  & \englishfonttt definition &  \englishfonttt default\\
+		\hline
+		\bverb{lignes} & \textarabic{لتعيين عدد الأسطر بالإطار}                                         & 	\gverb{2}\\
+		\bverb{LTR}    & {\englishfonttt (boolean)} \textarabic{اتجاه الكتابة من اليسار إلى اليمين } &  \gverb{false}\\
+		\bverb{border} & {\englishfonttt (boolean)} \textarabic{لرسم أو إزالة الإطار}                   &  \gverb{true}\\
+		\hline	
+	    \end{tabular}
+		\par }
+		\bigskip
 		
-		-\makebox[0.88\columnwidth][l]{\bverb{\LR{\string\twoparts[fraction]\{first part\}\{second part\}}}=\textarabic{تقسيم الصفحة إلى جزءين النسبة بين عرضيهما هو \textenglish{"fraction"}}
-		}\gverb{(default=0.5)}
+		-\bverb{\LR{\string\note\{n\}}} = \textarabic{لتعيين علامة لكل تمرين	} \hfill \gverb{(no default)}
+		
+		-\bverb{\LR{\string\twoparts[fraction]\{first part\}\{second part\}}} = \textarabic{تقسيم الصفحة إلى جزءين}	 \hfill \gverb{(default=0.5)}
 		
 		\end{english}
 		
-		\end{RTL}
-	};
-	\end{tikzpicture}
+		
 	\bigskip
 }
 
