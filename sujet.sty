@@ -83,11 +83,11 @@
 }
 
 
-\DeclareOption{correction}{
-\def\nl{&&\\ }	
+\DeclareOption{correction}{%
+\def\nl{&&\\ }%	
 \@correctiontrue 
 \newenvironment{correction}{
-\begin{longtable}{|b{.75\textwidth}|>{\centering}b{\d@lastcol}|>{\centering\arraybackslash}b{\d@lastcol}|}
+\begin{longtable}{|>{\if@RTL \advance\@totalleftmargin \dimexpr 3\tabcolsep\relax\fi}b{.75\textwidth}|>{\centering\arraybackslash}b{\d@lastcol}|>{\centering\arraybackslash}b{\d@lastcol}|}
 	\hline 
 	\centering\sffamily\vtop to 0pt{\vskip0pt عناصر الإجابة\vss} & 
 	\multicolumn{2}{c|}{\sffamily العلامة}\\
