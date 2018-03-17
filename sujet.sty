@@ -72,11 +72,10 @@
 
 
 \def~#1:#2{%
-\def\plus{+}\def\equa{=}%
-\if#2\plus %
+\ifx #2+ %
 \@nte{#1}% 
 \else 
-\if#2\equa %
+\ifx #2= %
 \begingroup\@nte{#1}\@Nte{\result}\global\edef\result{0}\endgroup%
 \else
 \PackageError{sujet}{You must use + or = to add note or to show sum of notes}
@@ -111,6 +110,18 @@
 }
 }
 
+\RequirePackage{polyglossia}
+
+% languages & fonts===========================================
+\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
+\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
+\newfontfamily\englishfonttt{Latin Modern Mono}
+%=============================================================
+
+
 
 \DeclareOption{landscape}{
 	\geometry{landscape}
@@ -124,18 +135,6 @@
 
 \ProcessOptions\relax
 
-
-
-\RequirePackage{polyglossia}
-
-% languages & fonts===========================================
-\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
-\setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
-\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
-\newfontfamily\englishfonttt{Latin Modern Mono}
-%=============================================================
 
 
 \def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
