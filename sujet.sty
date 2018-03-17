@@ -18,7 +18,6 @@
 %%%%%%%%%%%%
 
 \RequirePackage{etoolbox}
-\RequirePackage[nomessages]{fp}% for arithmetic calc
 \RequirePackage[margin=2cm]{geometry}
 \RequirePackage{amsmath,amsfonts,amssymb}
 \RequirePackage{tikz}
@@ -27,7 +26,16 @@
 \RequirePackage{fancyhdr}
 \RequirePackage{array}    
 \RequirePackage{longtable}    
+\RequirePackage{polyglossia}
 
+% languages & fonts===========================================
+\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
+\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
+\newfontfamily\englishfonttt{Latin Modern Mono}
+%=============================================================
 
 
 \newcount\c@nbrlignes
@@ -57,30 +65,36 @@
 	\settempdimen\hbox to \hsize{\hbox to 0pt{}\hfill\hbox to 0pt{\hskip\tempn\tikzmark{C}\hss}}&
 	\settempdimen\hbox to \hsize{\hfill\hbox to 0pt{\hskip\tempn\tikzmark{D}\hss}}\\ }
 
-\edef\result{0}
+\pgfkeys{/pgf/number format/.cd,fixed}
 
-\def\@nte#1{\FPadd\result\result{#1}\FPclip\result\result\global\edef\result{\result}%
+\def\Gpgfmathsetmacro#1#2%
+{\pgfmathsetmacro\result{#2}\global\let#1\result}
+
+\Gpgfmathsetmacro\gresult{0}
+
+\def\@nte#1{%
+\Gpgfmathsetmacro\gresult{\gresult + #1}%
 \vadjust{\vbox to 0pt{\vss%
-\hbox to \hsize{\hskip\hsize\hskip\d@addnote \hbox to 0pt{\hss#1\hss} \hss}%
+\hbox to \hsize{\hskip\hsize\hskip\d@addnote\hbox to 0pt{\hss\pgfmathprintnumber{#1}\hss}\hss}%
 \vskip.8ex}}}
 
 \def\@Nte#1{%
-\advance \d@addnote by \dimexpr  2\tabcolsep+\d@lastcol+\arrayrulewidth\relax%
+\advance\d@addnote by\dimexpr2\tabcolsep+\d@lastcol+\arrayrulewidth\relax%
 \vadjust{\vbox to 0pt{\vss%
-\hbox to \hsize{\hskip\hsize\hskip\d@addnote \hbox to 0pt{\hss#1\hss} \hss}%
+\hbox to \hsize{\hskip\hsize\hskip\d@addnote \hbox to 0pt{\hss\pgfmathprintnumber{#1}\hss}\hss}%
 \vskip.8ex}}}
 
 
 \def~#1:#2{%
-\ifx #2+ %
+\ifx #2+%
 \@nte{#1}% 
-\else 
-\ifx #2= %
-\begingroup\@nte{#1}\@Nte{\result}\global\edef\result{0}\endgroup%
-\else
+\else% 
+\ifx #2=%
+\begingroup\@nte{#1}\@Nte{\gresult}\Gpgfmathsetmacro\gresult{0}\endgroup%
+\else%
 \PackageError{sujet}{You must use + or = to add note or to show sum of notes}
-\fi 
-\fi   
+\fi% 
+\fi%   
 }
 
 
@@ -109,18 +123,6 @@
 \fi
 }
 }
-
-\RequirePackage{polyglossia}
-
-% languages & fonts===========================================
-\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
-\setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
-\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
-\newfontfamily\englishfonttt{Latin Modern Mono}
-%=============================================================
-
 
 
 \DeclareOption{landscape}{
