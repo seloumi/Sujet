@@ -175,14 +175,14 @@
 {المدة: #1}
 \newcommand{\niveau}[1][1 ج م ع تك]
 {المستوى: #1}
-\newcommand{\nom}[1][false]{\csname nom#1\endcsname\if@nom\nombox \fi}
+\newcommand{\nom}[1][false]{\csname @nom#1\endcsname\if@nom\nombox \fi}
 
 % define keys ================================================
 
 \define@key{sujetkeys}{etab}{\renewcommand{\etab}[1]{#1}}
 \define@key{sujetkeys}{niveau}{\renewcommand{\niveau}[1]{المستوى: #1}}
 \define@key{sujetkeys}{duree}{\renewcommand{\duree}[1]{المدة: #1}}
-\define@key{sujetkeys}{nom}[true]{\renewcommand{\nom}{\csname nom#1\endcsname\if@nom\nombox \fi}}
+\define@key{sujetkeys}{nom}[true]{\renewcommand{\nom}{\csname @nom#1\endcsname\if@nom\nombox \fi}}
 \define@key{solboxkeys}{lignes}{\c@nbrlignes=#1}
 \define@key{solboxkeys}{LTR}[true]{\csname @LTR#1\endcsname}
 \define@key{solboxkeys}{border}[true]{\csname @border#1\endcsname}
@@ -220,13 +220,13 @@
 	\par
 	\begin{tikzpicture}[thick]
 	\foreach \i in{1,...,\the\c@nbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
-	\ifLTR%
+	\if@LTR%
 	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\the\c@nbrlignes){#2};
 	\else
 	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\the\c@nbrlignes){#2};
 	\fi
 	\useasboundingbox (0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
-	\ifborder% 
+	\if@border% 
 	\draw [rounded corners](0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
 	\fi  
 	\end{tikzpicture}
