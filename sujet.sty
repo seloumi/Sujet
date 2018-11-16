@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  XeLaTeX Template
-% (05/11/2018)
+% (16/11/2018)
 %
 % author:
 % Salim bou (salimcollo7@gmail.com)
@@ -36,8 +36,8 @@
 %=============================================================
 
 
-\newcount\c@nbrlignes
-\c@nbrlignes=2
+\newcount\c@nbrlines
+\c@nbrlines=2
 
 \newdimen\d@lastcol
 \d@lastcol=\dimexpr .125\textwidth-3\tabcolsep-2\arrayrulewidth\relax 
@@ -46,7 +46,7 @@
 \d@addnote=\dimexpr 2\tabcolsep+\arrayrulewidth+.5\d@lastcol\relax
 
 
-\newif \if@nom           \@nomfalse
+\newif \if@name          \@namefalse
 \newif \if@LTR           \@LTRfalse
 \newif \if@border        \@bordertrue
 \newif \if@correction    \@correctionfalse
@@ -156,7 +156,7 @@
 
 \tikzset{Rnode/.style={font=\beginR}}
 
-\newcommand{\nombox}{
+\newcommand{\namebox}{
 	\begin{tikzpicture}
 	\draw [dotted](3mm,0)--(\columnwidth-3mm,0);
 	\node[fill=white,left,Rnode] at (\columnwidth-3\pgflinewidth,0){اللقب والإسم:};
@@ -181,21 +181,21 @@
 
 \def\annee{ السنة الدراسية:\@annee}
 
-\newcommand{\etab}[1][ثانوية:  اسم المؤسسسة هنا ]
+\newcommand{\school}[1][ثانوية: عمار بوقيقز - القل  ]
 {#1}
-\newcommand{\duree}[1][ساعة]
+\newcommand{\duration}[1][ساعة]
 {المدة: #1}
-\newcommand{\niveau}[1][3 ت ق]
+\newcommand{\level}[1][3 ت ق]
 {المستوى: #1}
-\newcommand{\nom}[1][false]{\csname @nom#1\endcsname\if@nom\nombox \fi}
+\newcommand{\name}[1][false]{\csname @name#1\endcsname\if@name\namebox \fi}
 
 % define keys ================================================
 
-\define@key{sujetkeys}{etab}{\renewcommand{\etab}[1]{#1}}
-\define@key{sujetkeys}{niveau}{\renewcommand{\niveau}[1]{المستوى: #1}}
-\define@key{sujetkeys}{duree}{\renewcommand{\duree}[1]{المدة: #1}}
-\define@key{sujetkeys}{nom}[true]{\renewcommand{\nom}[1][true]{\csname @nom#1\endcsname\if@nom\nombox \fi}}
-\define@key{solboxkeys}{lignes}{\c@nbrlignes=#1}
+\define@key{sujetkeys}{school}{\renewcommand{\school}[1]{#1}}
+\define@key{sujetkeys}{level}{\renewcommand{\level}[1]{المستوى: #1}}
+\define@key{sujetkeys}{duration}{\renewcommand{\duration}[1]{المدة: #1}}
+\define@key{sujetkeys}{name}[true]{\renewcommand{\name}[1][true]{\csname @name#1\endcsname\if@name\namebox \fi}}
+\define@key{solboxkeys}{lines}{\c@nbrlines=#1}
 \define@key{solboxkeys}{LTR}[true]{\csname @LTR#1\endcsname}
 \define@key{solboxkeys}{border}[true]{\csname @border#1\endcsname}
 
@@ -207,7 +207,7 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \etab{}\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\etab{}\fi\fi\hfill\annee\fi}
+	\chead{\sffamily \ifnum\thepage=1 \schoolfuck{}\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\school{}\fi\fi\hfill\annee\fi}
 	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
 	\if@correction
 	\else
@@ -215,8 +215,8 @@
 	\begingroup 
 	\sffamily\large\leavevmode\hfill  #2 \hfill\ \par
 	\rule{\columnwidth}{1pt}
-	\niveau\ \hfill \duree \par \endgroup}% 
-	\head\nom
+	\level\ \hfill \duration \par \endgroup}% 
+	\head\name
     \fi
 }  
 
@@ -231,21 +231,21 @@
 	\setkeys{solboxkeys}{#1}
 	\par
 	\begin{tikzpicture}[thick]
-	\foreach \i in{1,...,\the\c@nbrlignes}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
+	\foreach \i in{1,...,\the\c@nbrlines}{\draw[dotted](5mm,\i)--(\linewidth-5mm,\i);}
 	\if@LTR%
-	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\the\c@nbrlignes){#2};
+	\node[anchor=west,fill=white,xshift=-1mm,yshift=-0.1mm,inner sep=0pt,minimum size=0pt,align=left] at (5mm,\the\c@nbrlines){#2};
 	\else
-	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\the\c@nbrlignes){#2};
+	\node[anchor=east,fill=white,xshift=1mm,yshift=0.3mm,inner sep=0pt,minimum size=0pt,Rnode] at (\linewidth-5mm,\the\c@nbrlines){#2};
 	\fi
-	\useasboundingbox (0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
+	\useasboundingbox (0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlines+0.8);
 	\if@border% 
-	\draw [rounded corners](0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlignes+0.8);
+	\draw [rounded corners](0,0.3) rectangle (\linewidth-2.9\pgflinewidth,\the\c@nbrlines+0.8);
 	\fi  
 	\end{tikzpicture}
 	\par
 	\@LTRfalse    
 	\@bordertrue
-    \c@nbrlignes=2
+    \c@nbrlines=2
 }
 
 % define \twoparts command  =====================================
@@ -309,10 +309,10 @@
 		\hline
 		\englishfonttt key  & \englishfonttt definition &  \englishfonttt default\\
 		\hline
-		\bverb{etab}   & \textarabic{مؤسسة العمل}          & \gverb{\textarabic{اسم المؤسسة هنا}}\\
-		\bverb{niveau} & \textarabic{المستوى الدراسي}   &    \gverb{\textarabic{1 ج م ع تك}}\\
-		\bverb{duree}  & \textarabic{مدة الإختبار (الفرض)} &  \gverb{\textarabic{ساعة}}\\
-		\bverb{nom}    & {\englishfonttt (boolean)}\textarabic{إطار لكتابة اسم الطالب}  & \gverb{false}\\
+		\bverb{school}   & \textarabic{مؤسسة العمل}          & \gverb{\textarabic{اسم المؤسسة هنا}}\\
+		\bverb{level} & \textarabic{المستوى الدراسي}   &    \gverb{\textarabic{1 ج م ع تك}}\\
+		\bverb{duration}  & \textarabic{مدة الإختبار (الفرض)} &  \gverb{\textarabic{ساعة}}\\
+		\bverb{name}    & {\englishfonttt (boolean)}\textarabic{إطار لكتابة اسم الطالب}  & \gverb{false}\\
 		\hline
 		\end{tabular}
 	    \par\bigskip  
@@ -348,7 +348,7 @@
 		\hline 
 		\englishfonttt key  & \englishfonttt definition &  \englishfonttt default\\
 		\hline
-		\bverb{lignes} & \textarabic{لتعيين عدد الأسطر بالإطار}                                         & 	\gverb{2}\\
+		\bverb{lines} & \textarabic{لتعيين عدد الأسطر بالإطار}                                         & 	\gverb{2}\\
 		\bverb{LTR}    & {\englishfonttt (boolean)} \textarabic{اتجاه الكتابة من اليسار إلى اليمين } &  \gverb{false}\\
 		\bverb{border} & {\englishfonttt (boolean)} \textarabic{لرسم أو إزالة الإطار}                   &  \gverb{true}\\
 		\hline	
