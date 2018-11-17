@@ -1,0 +1,10 @@
+%  command line to open this file for user modification  
+%  for /F "tokens=*" %i in ('kpsewhich sujetset.sty') do %i
+
+\newcommand{\school}[1][اسم المؤسسة هنا]
+{#1}
+\newcommand{\duration}[1][ساعة]
+{المدة: #1}
+\newcommand{\level}[1][3 ت ق]
+{المستوى: #1}
+\newcommand{\name}[1][false]{\csname @name#1\endcsname\if@name\namebox \fi}
