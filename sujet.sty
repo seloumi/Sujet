@@ -25,6 +25,7 @@
 \RequirePackage{array}    
 \RequirePackage{longtable}    
 \RequirePackage{polyglossia}
+\RequirePackage{sujetset}
 
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
@@ -180,14 +181,6 @@
 }
 
 \def\annee{ السنة الدراسية:\@annee}
-
-\newcommand{\school}[1][ثانوية: عمار بوقيقز - القل  ]
-{#1}
-\newcommand{\duration}[1][ساعة]
-{المدة: #1}
-\newcommand{\level}[1][3 ت ق]
-{المستوى: #1}
-\newcommand{\name}[1][false]{\csname @name#1\endcsname\if@name\namebox \fi}
 
 % define keys ================================================
 
