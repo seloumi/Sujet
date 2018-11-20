@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  XeLaTeX Template
-% (16/11/2018)
+% (20/11/2018)
 %
 % author:
 % Salim bou (salimcollo7@gmail.com)
@@ -10,7 +10,7 @@
 % Used fonts: Amiri, AlBattar, Traditional Arabic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{sujet}[2018/02/14]
+\ProvidesPackage{sujet}[2018/11/20]
 
 %%%%%%%%%%%%
 % packages %
@@ -25,7 +25,7 @@
 \RequirePackage{array}    
 \RequirePackage{longtable}    
 \RequirePackage{polyglossia}
-\RequirePackage{sujetset}
+\RequirePackage{sujet-default}
 
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
@@ -154,14 +154,10 @@
 
 \DeclareOption*{\PackageWarning{sujet}{Unknown ‘\CurrentOption’ option}}
 
-
 \ProcessOptions\relax
-
-
 
 \def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
 	\else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
-
 
 \tikzset{Rnode/.style={font=\beginR}}
 
@@ -201,29 +197,27 @@
 \define@key{solboxkeys}{border}[true]{\csname @border#1\endcsname}
 
 
+\long\def\@head#1{\begingroup 
+	\sffamily\large\leavevmode\hfill  #1 \hfill\ \par
+	\rule{\columnwidth}{1pt}
+	\level\ \hfill \duration \par \endgroup}
+
+\newcommand{\head}[1]{\long\gdef\@head{\begingroup #1\par\endgroup}}
+
 %define sujetset command  ======================================
 \newcommand\sujetset[2][]{%
 	\setkeys{sujetkeys}{#1}
-	\pagestyle{fancy}
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
 	\chead{\sffamily \ifnum\thepage=1 \school{}\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\school{}\fi\fi\hfill\annee\fi}
 	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
+    \pagestyle{fancy}
 	\if@correction
 	\else
-	\long\gdef\head{%
-	\begingroup 
-	\sffamily\large\leavevmode\hfill  #2 \hfill\ \par
-	\rule{\columnwidth}{1pt}
-	\level\ \hfill \duration \par \endgroup}% 
-	\AtBeginDocument{\head\name}
+	\AtBeginDocument{\@head{#2}\name}
 	\fi
-}  di
-
-
-
-
+}  
 
 \setlength{\headsep}{15pt}% defaut 25pt
 \setlength{\headheight}{15.4pt}
