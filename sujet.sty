@@ -29,7 +29,6 @@
 
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
-\setotherlanguage{english}
 \newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
 \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
 \newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
@@ -127,7 +126,11 @@
 \DeclareOption{landscape}{
 	\geometry{landscape}
 	\if@twocolumn 
+	\ifdefined\renewfontfamily
 	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\else
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\fi
 	\geometry{hmargin=1cm}	    
 	\fi 
 }
@@ -136,9 +139,14 @@
 \DeclareOption{2in1}{
 	\geometry{landscape,hmargin=1cm}
 	\@twocolumntrue 
+	\ifdefined\renewfontfamily
 	\renewfontfamily\arabicfont[Script=Arabic,Scale=1]{Amiri}
-   	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
-    \renewcommand{\columnseprule}{1pt}
+	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\else
+	\newfontfamily\arabicfont[Script=Arabic,Scale=1]{Amiri}
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\fi
+	\renewcommand{\columnseprule}{1pt}
     \setlength\columnsep{\Gm@rmargin}
 	\multiply \columnsep by 2    
 }
@@ -209,9 +217,13 @@
 	\sffamily\large\leavevmode\hfill  #2 \hfill\ \par
 	\rule{\columnwidth}{1pt}
 	\level\ \hfill \duration \par \endgroup}% 
-	\head\name
-    \fi
-}  
+	\AtBeginDocument{\head\name}
+	\fi
+}  di
+
+
+
+
 
 \setlength{\headsep}{15pt}% defaut 25pt
 \setlength{\headheight}{15.4pt}
@@ -275,7 +287,6 @@
 \def\bverb#1{\begingroup\englishfonttt \textcolor{blue}{#1}\endgroup}
 \def\gverb#1{\begingroup\englishfonttt \footnotesize \textcolor{gray!40!black}{#1}
 	\endgroup}
-
 
 
 
