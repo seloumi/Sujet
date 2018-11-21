@@ -1,11 +1,10 @@
 %  command line to open this file for user modification  
 %  for /F "tokens=*" %i in ('kpsewhich sujetset.sty') do %i
 
-\newcommand{\school}[1][اسم المؤسسة هنا]
-{#1}
-\newcommand{\duration}[1][المدة: ساعة]
-{#1}
-\newcommand{\level}[1][المستوى: 3 ت ق]
-{#1}
-\newcommand{\name}[1][false]
-{\csname @name#1\endcsname\if@name\namebox \fi}
+\def\@school{اسم المؤسسة هنا}
+
+\def\@duration{المدة: ساعة}
+
+\def\@level{المستوى: 3 ت ق}
+
+\def\@name{false}   % true or false to show (or hide) box for student name
