@@ -29,6 +29,7 @@
 
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
+\setotherlanguage{english}
 \newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
 \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
 \newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
@@ -186,23 +187,34 @@
 
 \def\annee{ السنة الدراسية:\@annee}
 
+\newcommand{\school}[1]
+{\gdef\@school{#1}}
+
+\newcommand{\duration}[1]
+{\gdef\@duration{#1}}
+
+\newcommand{\level}[1]
+{\gdef\@level{#1}}
+
+\newcommand{\name}[1][\@name]{\expandafter\csname @name#1\endcsname\if@name\namebox \fi}
+
+\long\def\@head#1{\begingroup 
+	\sffamily\large\leavevmode\hfill  #1 \hfill\ \par
+	\rule{\columnwidth}{1pt}
+	\@level\ \hfill \@duration \par \endgroup}
+
+\newcommand{\head}[1]{\long\gdef\@head{\begingroup #1\par\endgroup}}
+
 % define keys ================================================
 
-\define@key{sujetkeys}{school}{\renewcommand{\school}[1]{#1}}
-\define@key{sujetkeys}{level}{\renewcommand{\level}[1]{المستوى: #1}}
-\define@key{sujetkeys}{duration}{\renewcommand{\duration}[1]{المدة: #1}}
+\define@key{sujetkeys}{school}{\school{#1}}
+\define@key{sujetkeys}{level}{\level{#1}}
+\define@key{sujetkeys}{duration}{\duration{#1}}
 \define@key{sujetkeys}{name}[true]{\renewcommand{\name}[1][true]{\csname @name#1\endcsname\if@name\namebox \fi}}
 \define@key{solboxkeys}{lines}{\c@nbrlines=#1}
 \define@key{solboxkeys}{LTR}[true]{\csname @LTR#1\endcsname}
 \define@key{solboxkeys}{border}[true]{\csname @border#1\endcsname}
 
-
-\long\def\@head#1{\begingroup 
-	\sffamily\large\leavevmode\hfill  #1 \hfill\ \par
-	\rule{\columnwidth}{1pt}
-	\level\ \hfill \duration \par \endgroup}
-
-\newcommand{\head}[1]{\long\gdef\@head{\begingroup #1\par\endgroup}}
 
 %define sujetset command  ======================================
 \newcommand\sujetset[2][]{%
@@ -210,7 +222,7 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \school{}\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\school{}\fi\fi\hfill\annee\fi}
+	\chead{\sffamily \ifnum\thepage=1 \@school\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\@school\fi\fi\hfill\annee\fi}
 	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
     \pagestyle{fancy}
 	\if@correction
@@ -300,7 +312,7 @@
 		هي كلمات مفتاحية وهي بالتفصيل :
 		\bigskip
 		
-		\begin{english}
+		\begin{LTR}
 		
 		{\centering 
 		\begin{tabular}{@{\hskip1em}lp{6cm}p{2.5cm}}
@@ -316,7 +328,7 @@
 	    \par\bigskip  
          }
 		
-	    \end{english}
+	    \end{LTR}
 		
 		إذا لم تحدد الكلمات المفتاحية في التعليمة
 		\bverb{sujetset}
@@ -355,7 +367,7 @@
 		\bigskip
 		
 		-\bverb{\LR{\string\note\{n\}}} = \textarabic{لتعيين علامة لكل تمرين	} \hfill \gverb{(no default)}
-		
+		l
 		-\bverb{\LR{\string\twoparts[fraction]\{first part\}\{second part\}}} = \textarabic{تقسيم الصفحة إلى جزءين}	 \hfill \gverb{(default=0.5)}
 		
 		\end{english}
