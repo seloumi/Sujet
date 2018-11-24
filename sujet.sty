@@ -30,10 +30,11 @@
 % languages & fonts===========================================
 \setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
 \setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{AlBattar} 
-\newfontfamily\arabicfonttt[Script=Arabic]{Traditional Arabic}
-\newfontfamily\englishfonttt{Latin Modern Mono}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{\@arabicfont}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{\@arabicfontsf} 
+\newfontfamily\arabicfonttt[Script=Arabic]{\@arabicfonttt}
+\newfontfamily\englishfont{\@englishfont}
+\newfontfamily\englishfonttt{\@englishfonttt}
 %=============================================================
 
 
@@ -128,9 +129,9 @@
 	\geometry{landscape}
 	\if@twocolumn 
 	\ifdefined\renewfontfamily
-	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
 	\else
-	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
 	\fi
 	\geometry{hmargin=1cm}	    
 	\fi 
@@ -141,11 +142,11 @@
 	\geometry{landscape,hmargin=1cm}
 	\@twocolumntrue 
 	\ifdefined\renewfontfamily
-	\renewfontfamily\arabicfont[Script=Arabic,Scale=1]{Amiri}
-	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\renewfontfamily\arabicfont[Script=Arabic,Scale=1]{\@arabicfont}
+	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
 	\else
-	\newfontfamily\arabicfont[Script=Arabic,Scale=1]{Amiri}
-	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{AlBattar}
+	\newfontfamily\arabicfont[Script=Arabic,Scale=1]{\@arabicfont}
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
 	\fi
 	\renewcommand{\columnseprule}{1pt}
     \setlength\columnsep{\Gm@rmargin}
