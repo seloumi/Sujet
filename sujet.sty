@@ -232,8 +232,8 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \@school\hfill\ifGm@landscape\if@twocolumn\@schoolyear\hskip\columnsep\@school\fi\fi\hfill\@schoolyear\fi}
-	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
+	\chead{\sffamily \ifnum\the\c@page=1 \@school\hfill\ifGm@landscape\if@twocolumn\@schoolyear\hskip\columnsep\@school\fi\fi\hfill\@schoolyear\fi}
+	\cfoot{\ifnum\ztotpages>1 \newcount\c@totpage \c@totpage=\ztotpages  \hfill  صفحة \thepage\ من  \@arabic{\c@totpage} \hfill  \ifGm@landscape صفحة \thepage\ من \@arabic{\c@totpage} \hfill \fi\fi}
     \pagestyle{fancy}
 	\if@correction
 	\else
