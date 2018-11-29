@@ -174,7 +174,7 @@
 }
 
 
-\def\@annee{
+\def\sch@year{
 \newcount\altyear
 \altyear=\year
 \ifnum\month>8 %
@@ -186,16 +186,25 @@
 \fi 
 }
 
-\def\annee{ السنة الدراسية:\@annee}
+\def\@schoolyear{ السنة الدراسية:\sch@year}
+
+\newcommand{\schoolyear}[1]
+{\gdef\@schoolyear{#1}
+\gdef\theschooyear{#1}}
+
 
 \newcommand{\school}[1]
-{\gdef\@school{#1}}
+{\gdef\@school{#1}
+\gdef\theschool{#1}}
+
 
 \newcommand{\duration}[1]
-{\gdef\@duration{#1}}
+{\gdef\@duration{#1}
+\gdef\theduration{#1}}
 
 \newcommand{\level}[1]
-{\gdef\@level{#1}}
+{\gdef\@level{#1}
+\gdef\thelevel{#1}}
 
 \newcommand{\name}[1][\@name]{\expandafter\csname @name#1\endcsname\if@name\namebox \fi}
 
@@ -223,7 +232,7 @@
 	\fancyhead{}% clear all header fields
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
-	\chead{\sffamily \ifnum\thepage=1 \@school\hfill\ifGm@landscape\if@twocolumn\annee\hskip\columnsep\@school\fi\fi\hfill\annee\fi}
+	\chead{\sffamily \ifnum\thepage=1 \@school\hfill\ifGm@landscape\if@twocolumn\@schoolyear\hskip\columnsep\@school\fi\fi\hfill\@schoolyear\fi}
 	\cfoot{\ifnum\ztotpages>1   \hfill  صفحة \thepage\ من \ztotpages \hfill  \ifGm@landscape صفحة \thepage\ من \ztotpages \hfill \fi\fi}
     \pagestyle{fancy}
 	\if@correction
