@@ -28,13 +28,13 @@
 \RequirePackage{sujetset}
 
 % languages & fonts===========================================
-\setdefaultlanguage[calendar=gregorian,numerals=maghrib]{arabic}
+\setmainlanguage[calendar=gregorian,numerals=maghrib]{arabic}
 \setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{\@arabicfont}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{\@arabicfontsf} 
-\newfontfamily\arabicfonttt[Script=Arabic]{\@arabicfonttt}
-\newfontfamily\englishfont{\@englishfont}
-\newfontfamily\englishfonttt{\@englishfonttt}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{\Arabicfont}
+\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{\Arabicfontsf} 
+\newfontfamily\arabicfonttt[Script=Arabic]{\Arabicfonttt}
+\newfontfamily\englishfont{\Latinfont}
+\newfontfamily\englishfonttt{\Latinfonttt}
 %=============================================================
 
 
@@ -129,9 +129,9 @@
 	\geometry{landscape}
 	\if@twocolumn 
 	\ifdefined\renewfontfamily
-	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
+	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\Arabicfontsf}
 	\else
-	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\Arabicfontsf}
 	\fi
 	\geometry{hmargin=1cm}	    
 	\fi 
@@ -142,11 +142,11 @@
 	\geometry{landscape,hmargin=1cm}
 	\@twocolumntrue 
 	\ifdefined\renewfontfamily
-	\renewfontfamily\arabicfont[Script=Arabic,Scale=1]{\@arabicfont}
-	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
+	\renewfontfamily\arabicfont[Script=Arabic,Scale=1]{\Arabicfont}
+	\renewfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\Arabicfontsf}
 	\else
-	\newfontfamily\arabicfont[Script=Arabic,Scale=1]{\@arabicfont}
-	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\@arabicfontsf}
+	\newfontfamily\arabicfont[Script=Arabic,Scale=1]{\Arabicfont}
+	\newfontfamily\arabicfontsf[Script=Arabic,Scale=1]{\Arabicfontsf}
 	\fi
 	\renewcommand{\columnseprule}{1pt}
     \setlength\columnsep{\Gm@rmargin}
@@ -174,7 +174,7 @@
 }
 
 
-\def\sch@year{
+\def\schyear{
 \newcount\altyear
 \altyear=\year
 \ifnum\month>8 %
@@ -185,8 +185,6 @@
       \the\altyear\ - \the\year
 \fi 
 }
-
-\def\@schoolyear{ السنة الدراسية:\sch@year}
 
 \newcommand{\schoolyear}[1]
 {\gdef\@schoolyear{#1}
@@ -210,7 +208,7 @@
 
 \long\def\@head#1{\begingroup 
 	\sffamily\large\leavevmode\hfill  #1 \hfill\ \par
-	\rule{\columnwidth}{1pt}
+	\rule{\linewidth}{1pt}
 	\@level\ \hfill \@duration \par \endgroup}
 
 \newcommand{\head}[1]{\long\gdef\@head{\begingroup #1\par\endgroup}}
@@ -220,6 +218,7 @@
 \define@key{sujetkeys}{school}{\school{#1}}
 \define@key{sujetkeys}{level}{\level{#1}}
 \define@key{sujetkeys}{duration}{\duration{#1}}
+\define@key{sujetkeys}{year}{\schoolyear{#1}}
 \define@key{sujetkeys}{name}[true]{\renewcommand{\name}[1][true]{\csname @name#1\endcsname\if@name\namebox \fi}}
 \define@key{solboxkeys}{lines}{\c@nbrlines=#1}
 \define@key{solboxkeys}{LTR}[true]{\csname @LTR#1\endcsname}
@@ -241,7 +240,7 @@
 	\fi
 }  
 
-\setlength{\headsep}{15pt}% defaut 25pt
+\setlength{\headsep}{12pt}% defaut 25pt
 \setlength{\headheight}{15.4pt}
 \setlength{\itemsep}{3cm}
 \arraycolsep=1.4pt
