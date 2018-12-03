@@ -49,22 +49,26 @@
 \d@addnote=\dimexpr 2\tabcolsep+\arrayrulewidth+.5\d@lastcol\relax
 
 
+
 \newif \if@name          \@namefalse
 \newif \if@LTR           \@LTRfalse
 \newif \if@border        \@bordertrue
 \newif \if@correction    \@correctionfalse
-\newif \if@stretchtable  \@stretchtablefalse
 
 
 \def\settempdimen{\newdimen\tempn \tempn=.5\arrayrulewidth \advance \tempn by \tabcolsep\relax}
 
-\def\tikzmark#1{\tikz[remember picture,overlay]\node(#1)[inner sep=0pt]{};}
 
-\def\stretchtable{%
-	\global\@stretchtabletrue%
-	\settempdimen\hbox to \hsize{\hbox to 0pt{\hss\tikzmark{A}\hskip\tempn}\hfill\hbox to 0pt{\hskip\tempn\tikzmark{B}\hss}}&
-	\settempdimen\hbox to \hsize{\hbox to 0pt{}\hfill\hbox to 0pt{\hskip\tempn\tikzmark{C}\hss}}&
-	\settempdimen\hbox to \hsize{\hfill\hbox to 0pt{\hskip\tempn\tikzmark{D}\hss}}\\ }
+\def\stretch#1{%
+	&& \write\@auxout{%
+		\gdef\expandafter\string\csname stretch@#1\endcsname{%
+			\string\\[\the\dimexpr\the\pdflastypos sp -75pt\relax]}}\pdfsavepos%
+	\expandafter\ifx\csname stretch@#1\endcsname\relax
+	\expandafter\\%
+	\else
+	\csname stretch@#1\expandafter\endcsname
+	\fi}
+
 
 \pgfkeys{/pgf/number format/.cd,fixed}
 
@@ -101,7 +105,6 @@
 
 \DeclareOption{correction}{%
 \def\corr@enumi{\if@RTL \advance\@totalleftmargin \dimexpr 3\tabcolsep\relax\fi}
-\def\nl{&&\\ }%	
 \@correctiontrue 
 \newenvironment{correction}{
 \begin{longtable}{|>{\corr@enumi}b{.75\textwidth}|>{\centering\arraybackslash}b{\d@lastcol}|>{\centering\arraybackslash}b{\d@lastcol}|}
@@ -116,12 +119,6 @@
 	\hline   
 }{
 \end{longtable}
-\if@stretchtable 
-\begin{tikzpicture}[remember picture,overlay]
-\draw[line width=\arrayrulewidth](A)|-([yshift=2cm]current page.south)-|(D);
-\draw[line width=\arrayrulewidth](B)|-([yshift=2cm]current page.south)-|(C);
-\end{tikzpicture}
-\fi
 }
 }
 
@@ -292,9 +289,9 @@
 {\large\sffamily}{}{0em}{\underline{#1}%
 	\ifnum\c@note>1 % 
 	\ifnum\c@note>10 % 
-	\formatnote{نقطة} %
+	\formatnote{\if@RTL نقطة\else points\fi} %
 	\else %
-	\formatnote{نقاط} %
+	\formatnote{\if@RTL نقاط\else points\fi} %
 	\fi %
 	\global\c@note=1
 	\fi}
