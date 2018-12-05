@@ -41,6 +41,8 @@
 
 \newcount\c@nbrlines
 \c@nbrlines=2
+\newcount\c@stretchlab
+
 
 \newdimen\d@lastcol
 \d@lastcol=\dimexpr .125\textwidth-3\tabcolsep-2\arrayrulewidth\relax 
@@ -59,7 +61,7 @@
 \def\settempdimen{\newdimen\tempn \tempn=.5\arrayrulewidth \advance \tempn by \tabcolsep\relax}
 
 
-\def\stretch#1{%
+\def\@stretch#1{%
 	&& \write\@auxout{%
 		\gdef\expandafter\string\csname stretch@#1\endcsname{%
 			\string\\[\the\dimexpr\the\pdflastypos sp -75pt\relax]}}\pdfsavepos%
@@ -68,6 +70,8 @@
 	\else
 	\csname stretch@#1\expandafter\endcsname
 	\fi}
+
+\def\stretchtable{\global\advance\c@stretchlab 1 \expandafter\@stretch\expandafter{\romannumeral\c@stretchlab}}
 
 
 \pgfkeys{/pgf/number format/.cd,fixed}
@@ -280,21 +284,23 @@
 }
 
 % section format  =============================================
-\newcount\c@note
-\c@note=1
-\def\note#1{\global\c@note=#1}
-\def\formatnote#1{\begingroup\normalfont\footnotesize\color{red!60!black}\mbox{(\number\c@note\kern .5 ex  #1)}\endgroup} 
+\def\@note{0}
+\def\note#1{\gdef\@note{#1}}
+\def\formatnote#1{\begingroup\normalfont\footnotesize\color{red!60!black}\mbox{(\@note\kern .5 ex  #1)}\endgroup} 
 
 \titleformat{\section}
 {\large\sffamily}{}{0em}{\underline{#1}%
-	\ifnum\c@note>1 % 
-	\ifnum\c@note>10 % 
-	\formatnote{\if@RTL نقطة\else points\fi} %
-	\else %
-	\formatnote{\if@RTL نقاط\else points\fi} %
-	\fi %
-	\global\c@note=1
-	\fi}
+\ifdim\@note pt > 0 pt% 
+\ifdim\@note pt >10 pt% 
+\formatnote{\if@RTL نقطة\else points\fi} %
+\else %
+\formatnote{\if@RTL نقاط\else points\fi} %
+\fi%
+\fi%
+\note{0}
+}
+
+
 
 % define command \help =========================================
 \def\bverb#1{\begingroup\englishfonttt \textcolor{blue}{#1}\endgroup}
