@@ -27,15 +27,16 @@
 \RequirePackage{polyglossia}
 \RequirePackage{sujetset}
 
-% languages & fonts===========================================
-\setmainlanguage[calendar=gregorian,numerals=maghrib]{arabic}
-\setotherlanguage{english}
+% fonts===========================================
 \newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{\Arabicfont}
 \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.2]{\Arabicfontsf} 
 \newfontfamily\arabicfonttt[Script=Arabic]{\Arabicfonttt}
 \newfontfamily\englishfont{\Latinfont}
 \newfontfamily\englishfontsf{\Latinfontsf}
 \newfontfamily\englishfonttt{\Latinfonttt}
+\newfontfamily\frenchfont{\Latinfont}
+\newfontfamily\frenchfontsf{\Latinfontsf}
+\newfontfamily\frenchfonttt{\Latinfonttt}
 %=============================================================
 
 
@@ -52,6 +53,7 @@
 
 
 
+\newif \if@mlarabic      \@mlarabictrue
 \newif \if@name          \@namefalse
 \newif \if@LTR           \@LTRfalse
 \newif \if@border        \@bordertrue
@@ -107,6 +109,18 @@
 }
 
 
+\DeclareOption{arabic}{%
+\@mlarabictrue	
+}
+\DeclareOption{english}{%
+\@mlarabicfalse	
+\gdef\@mainlanguage{english}
+}
+\DeclareOption{french}{%
+\@mlarabicfalse		
+\gdef\@mainlanguage{french}
+}
+
 \DeclareOption{correction}{%
 \def\corr@enumi{\if@RTL \advance\@totalleftmargin \dimexpr 3\tabcolsep\relax\fi}
 \@correctiontrue 
@@ -158,7 +172,15 @@
 
 \DeclareOption*{\PackageWarning{sujet}{Unknown ‘\CurrentOption’ option}}
 
+\ExecuteOptions{arabic}
+
 \ProcessOptions\relax
+
+\if@mlarabic 
+\setmainlanguage[numerals=maghrib]{arabic}
+\else
+\setmainlanguage{\@mainlanguage}
+\fi
 
 \def\copycolumn{\if@twocolumn\newpage\setbox\@outputbox=\vbox{\copy\@leftcolumn} \box\@outputbox  %
 	\else \PackageWarning{sujet}{\noexpand\copycolumn used only with twocolumn option} \fi}
@@ -209,7 +231,7 @@
 \newcommand{\name}[1][\@name]{\expandafter\csname @name#1\endcsname\if@name\namebox \fi}
 
 \long\def\@head#1{\begingroup 
-	\sffamily\large\leavevmode\hfill  #1 \hfill\ \par
+	\sffamily\begingroup\large\leavevmode\hfill  #1 \hfill\ \endgroup\par
 	\rule{\linewidth}{1pt}
 	\@level\ \hfill \@duration \par \endgroup}
 
@@ -289,12 +311,12 @@
 \def\formatnote#1{\begingroup\normalfont\footnotesize\color{red!60!black}\mbox{(\@note\kern .5 ex  #1)}\endgroup} 
 
 \titleformat{\section}
-{\large\sffamily}{}{0em}{\underline{#1}%
+{\large\sffamily}{}{0em}{\underline{#1} %
 \ifdim\@note pt > 0 pt% 
 \ifdim\@note pt >10 pt% 
-\formatnote{\if@RTL نقطة\else points\fi} %
+\formatnote{\if@mlarabic نقطة\else points\fi}%
 \else %
-\formatnote{\if@RTL نقاط\else points\fi} %
+\formatnote{\if@mlarabic نقاط\else points\fi}%
 \fi%
 \fi%
 \note{0}
