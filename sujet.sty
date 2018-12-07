@@ -54,6 +54,7 @@
 
 
 \newif \if@mlarabic      \@mlarabictrue
+\newif \if@mlenglish     \@mlenglishfalse
 \newif \if@name          \@namefalse
 \newif \if@LTR           \@LTRfalse
 \newif \if@border        \@bordertrue
@@ -114,6 +115,7 @@
 }
 \DeclareOption{english}{%
 \@mlarabicfalse	
+\@mlenglishtrue
 \gdef\@mainlanguage{english}
 }
 \DeclareOption{french}{%
@@ -210,23 +212,22 @@
 \fi 
 }
 
+\def\theschooyear{\@schoolyear}
 \newcommand{\schoolyear}[1]
-{\gdef\@schoolyear{#1}
-\gdef\theschooyear{#1}}
+{\gdef\@schoolyear{#1}}
 
-
+\def\theschool{\@school}
 \newcommand{\school}[1]
-{\gdef\@school{#1}
-\gdef\theschool{#1}}
+{\gdef\@school{#1}}
 
 
+\def\theduration{\@duration}
 \newcommand{\duration}[1]
-{\gdef\@duration{#1}
-\gdef\theduration{#1}}
+{\gdef\@duration{#1}}
 
+\def\thelevel{\@level}
 \newcommand{\level}[1]
-{\gdef\@level{#1}
-\gdef\thelevel{#1}}
+{\gdef\@level{#1}}
 
 \newcommand{\name}[1][\@name]{\expandafter\csname @name#1\endcsname\if@name\namebox \fi}
 
@@ -256,7 +257,8 @@
 	\renewcommand{\footrulewidth}{1pt}
 	\renewcommand{\headrulewidth}{1pt}
 	\chead{\sffamily \ifnum\the\c@page=1 \@school\hfill\ifGm@landscape\if@twocolumn\@schoolyear\hskip\columnsep\@school\fi\fi\hfill\@schoolyear\fi}
-	\cfoot{\ifnum\ztotpages>1 \newcount\c@totpage \c@totpage=\ztotpages  \hfill  صفحة \thepage\ من  \@arabic{\c@totpage} \hfill  \ifGm@landscape صفحة \thepage\ من \@arabic{\c@totpage} \hfill \fi\fi}
+	\cfoot{\ifnum\ztotpages>1 \newcount\c@totpage \c@totpage=\ztotpages  \hfill  \pagename\ \thepage\ \if@mlarabic من\else\if@mlenglish of\else de\fi\fi\ %
+    \@arabic{\c@totpage} \hfill  \ifGm@landscape \pagename\ \thepage\ \if@mlarabic من\else\if@mlenglish of\else de\fi\fi\  \@arabic{\c@totpage} \hfill \fi\fi}
     \pagestyle{fancy}
 	\if@correction
 	\else
@@ -358,6 +360,7 @@
 		\bverb{level} & \textarabic{المستوى الدراسي}   &    \gverb{\textarabic{1 ج م ع تك}}\\
 		\bverb{duration}  & \textarabic{مدة الإختبار (الفرض)} &  \gverb{\textarabic{ساعة}}\\
 		\bverb{name}    & {\englishfonttt (boolean)}\textarabic{إطار لكتابة اسم الطالب}  & \gverb{false}\\
+        \bverb{year}    & \textarabic{الموسم الدراسي}  & \gverb{\textarabic{السنة الدراسيةبصبصح}}\\
 		\hline
 		\end{tabular}
 	    \par\bigskip  
