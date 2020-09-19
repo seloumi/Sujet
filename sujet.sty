@@ -262,7 +262,7 @@
     \pagestyle{fancy}
 	\if@correction
 	\else
-	\AtBeginDocument{\@head{#2}\name}
+	\AfterEndPreamble{\@head{#2}\name}
 	\fi
 }  
 
